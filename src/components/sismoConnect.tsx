@@ -14,18 +14,21 @@ import { FC, useState } from 'react'
 import { urlRoot } from '@/constants/common'
 import { litChain } from '@/constants/lit'
 
-type Props = {}
+type Props = {
+  authNum: number | undefined
+}
 
-export const SismoConnect: FC<Props> = () => {
+export const SismoConnect: FC<Props> = ({ authNum }) => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [proofs, setProofs] = useState<SismoConnectProof[]>()
 
-  const auths = [
-    { authType: AuthType.VAULT },
-    { authType: AuthType.EVM_ACCOUNT },
-    { authType: AuthType.EVM_ACCOUNT }
-  ]
+  const auths = !!authNum
+    ? [
+        { authType: AuthType.VAULT },
+        ...new Array(authNum).fill({ authType: AuthType.EVM_ACCOUNT })
+      ]
+    : []
 
   const handleVerify = async (response: SismoConnectResponse) => {
     // NOTE: exist a infinite fetching bug when loading is true
