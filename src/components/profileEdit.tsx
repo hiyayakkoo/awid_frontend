@@ -218,7 +218,7 @@ export const ProfileEdit: FC<{}> = () => {
   }
 
   return (
-    <VStack w="fill">
+    <VStack w="full">
       <Box position="relative" mb={32}>
         <Image src="/images/header-sm.png" w="full" alt="header" />
         <Container maxW="container.xl">
@@ -320,7 +320,10 @@ export const ProfileEdit: FC<{}> = () => {
               <Text fontSize="sm" fontWeight="bold">
                 Visibility setting
               </Text>
-              <Text>This will be displayed on you profile.</Text>
+              <Text>
+                Setting the scope to public. If set to private, only you will be
+                able to view it.
+              </Text>
             </VStack>
             <Select
               w="50%"
