@@ -1,6 +1,6 @@
 'use server'
 
-import { sismoAppId } from '@/constants/sismo'
+import { sismoConnectConfig } from '@/constants/sismo'
 import {
   SismoConnectConfig,
   SismoConnectVerifiedResult,
@@ -13,10 +13,6 @@ export const sismoVerify = async (
   response: any,
   auths?: AuthRequest[]
 ): Promise<SismoConnectProof[]> => {
-  const sismoConnectConfig: SismoConnectConfig = {
-    // you can create a new Sismo Connect app at https://factory.sismo.io
-    appId: sismoAppId
-  }
   const sismoConnect = new SismoConnectServer({ config: sismoConnectConfig })
 
   try {

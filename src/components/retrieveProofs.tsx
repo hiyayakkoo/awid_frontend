@@ -7,6 +7,7 @@ import {
 } from '@lit-protocol/lit-node-client'
 import { FC, useEffect, useRef, useState } from 'react'
 import axios from 'axios'
+import { StoredFile } from '@/model/storedFile'
 
 type Props = {
   cid: string

@@ -1,6 +1,7 @@
-import { Inter } from 'next/font/google'
+import { Providers } from '@/components/Providers'
+import { Lato } from 'next/font/google'
 
-const inter = Inter({ subsets: ['latin'] })
+const lato = Lato({ weight: ['400', '700'], subsets: ['latin'] })
 
 export const metadata = {
   title: 'Create Next App',
@@ -14,8 +15,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className} suppressHydrationWarning={true}>
-        {children}
+      <body className={lato.className} suppressHydrationWarning={true}>
+        <Providers>{children}</Providers>
       </body>
     </html>
   )
