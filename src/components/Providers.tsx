@@ -4,23 +4,36 @@ import { CacheProvider } from '@chakra-ui/next-js'
 import { ChakraProvider } from '@chakra-ui/react'
 import { theme } from '../app/style'
 import { WagmiConfig, configureChains, createConfig } from 'wagmi'
-import { polygonZkEvmTestnet, lineaTestnet } from 'wagmi/chains'
+import { polygonMumbai, lineaTestnet } from 'wagmi/chains'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { publicProvider } from 'wagmi/providers/public'
 import { RainbowKitProvider } from '@rainbow-me/rainbowkit'
+import {
+  RainbowKitProvider,
+  connectorsForWallets
+} from '@rainbow-me/rainbowkit'
 import { useEffect, useState } from 'react'
-import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
+import { metaMaskWallet } from '@rainbow-me/rainbowkit/wallets'
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const { chains, publicClient } = configureChains(
-    [polygonZkEvmTestnet, lineaTestnet],
+    [polygonMumbai, lineaTestnet],
     [
-      alchemyProvider({ apiKey: process.env.ALCHEMY_ID ?? '' }),
+      alchemyProvider({
+        apiKey: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY ?? ''
+      }),
       publicProvider()
     ]
   )
 
-  const connectors = [new MetaMaskConnector()]
+  const projectId = 'Autonomous World ID'
+
+  const connectors = connectorsForWallets([
+    {
+      groupName: 'Recommended',
+      wallets: [metaMaskWallet({ projectId, chains })]
+    }
+  ])
 
   const wagmiConfig = createConfig({
     autoConnect: true,

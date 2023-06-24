@@ -94,9 +94,9 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
+        "internalType": "string",
+        "name": "id",
+        "type": "string"
       }
     ],
     "name": "getVisibility",
