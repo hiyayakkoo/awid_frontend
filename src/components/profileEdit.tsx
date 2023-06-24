@@ -23,7 +23,7 @@ import {
   Button,
   SkeletonText
 } from '@chakra-ui/react'
-import { FC, createRef, useCallback, useMemo, useState } from 'react'
+import { FC, createRef, useCallback, useEffect, useMemo, useState } from 'react'
 import Dropzone, { DropzoneRef, FileRejection } from 'react-dropzone'
 import { CloudUploadOutlined, VisibilityOffOutlined } from '@mui/icons-material'
 import imageCompression from 'browser-image-compression'
@@ -33,7 +33,6 @@ import {
   encryptString,
   uint8arrayToString
 } from '@lit-protocol/lit-node-client'
-import { accessControlConditions, litChain } from '@/constants/lit'
 import { storeJson } from '@/actions/ipfs/storeJson'
 import { useRouter } from 'next/navigation'
 import {
@@ -128,6 +127,14 @@ export const ProfileEdit: FC<{}> = () => {
   const proofs: SismoConnectProof[] = useMemo(() => {
     if (response == null) {
       return []
+    }
+
+    if (response.proofs.length == 1) {
+      const firstProof = response.proofs[0]
+      const auths = firstProof.auths ?? []
+      const firstAuth = auths[0]
+
+      router.push(`/profile/${firstAuth?.userId}`)
     }
 
     const proofMap = new Map<string, SismoConnectProof>()
@@ -225,6 +232,7 @@ export const ProfileEdit: FC<{}> = () => {
           chain,
           vaultId
         )
+
         const encryptedSymmetricKey: Uint8Array =
           await litNodeClient.saveEncryptionKey({
             accessControlConditions,

@@ -12,7 +12,6 @@ import {
 import { FC, useState } from 'react'
 
 import { urlRoot } from '@/constants/common'
-import { litChain } from '@/constants/lit'
 
 type Props = {
   authNum: number | undefined
@@ -21,7 +20,6 @@ type Props = {
 export const SismoConnect: FC<Props> = ({ authNum }) => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-  const [proofs, setProofs] = useState<SismoConnectProof[]>()
 
   const auths = !!authNum
     ? [
@@ -45,27 +43,13 @@ export const SismoConnect: FC<Props> = ({ authNum }) => {
     }
   }
 
-  const accessControlConditions = [
-    {
-      contractAddress: '',
-      standardContractType: '',
-      chain: litChain,
-      method: 'eth_getBalance',
-      parameters: [':userAddress', 'latest'],
-      returnValueTest: {
-        comparator: '>=',
-        value: '1000000000000'
-      }
-    }
-  ]
-
   return (
     <SismoConnectButton
       config={sismoConnectConfig}
       auths={auths}
       onResponse={handleVerify}
       loading={loading}
-      text="Register with Sismo"
+      text={authNum != 0 ? 'Register with Sismo' : 'Sign in with Sismo'}
       overrideStyle={{
         height: '2.5rem'
       }}

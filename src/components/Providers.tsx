@@ -7,7 +7,6 @@ import { WagmiConfig, configureChains, createConfig } from 'wagmi'
 import { polygonMumbai, lineaTestnet } from 'wagmi/chains'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { publicProvider } from 'wagmi/providers/public'
-import { RainbowKitProvider } from '@rainbow-me/rainbowkit'
 import {
   RainbowKitProvider,
   connectorsForWallets
@@ -43,6 +42,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   const [mounted, setMounted] = useState(false)
   useEffect(() => setMounted(true), [])
+
   return (
     <WagmiConfig config={wagmiConfig}>
       <RainbowKitProvider chains={chains}>

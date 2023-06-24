@@ -13,7 +13,6 @@ import {
   ModalHeader,
   ModalCloseButton,
   ModalBody,
-  ModalFooter,
   NumberInput,
   useColorModeValue,
   NumberInputField
@@ -65,7 +64,7 @@ export const Top: FC<{}> = () => {
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent bgColor={modalBg} color={modalString}>
+        <ModalContent bgColor={modalBg} color={modalString} p={8}>
           <ModalHeader>Register with Sismo</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
@@ -85,9 +84,19 @@ export const Top: FC<{}> = () => {
             </VStack>
           </ModalBody>
 
-          <ModalFooter>
-            <SismoConnect authNum={accountNumber} />
-          </ModalFooter>
+          <VStack spacing={4}>
+            <Box>
+              <SismoConnect authNum={accountNumber} />
+            </Box>
+
+            <Text fontSize="xl" fontWeight="bold">
+              OR
+            </Text>
+
+            <Box>
+              <SismoConnect authNum={0} />
+            </Box>
+          </VStack>
         </ModalContent>
       </Modal>
     </>
