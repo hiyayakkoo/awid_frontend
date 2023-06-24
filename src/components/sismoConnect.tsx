@@ -5,7 +5,6 @@ import { sismoConnectConfig } from '@/constants/sismo'
 import {
   AuthType,
   SismoConnectButton,
-  SismoConnectProof,
   SismoConnectResponse
 } from '@sismo-core/sismo-connect-react'
 

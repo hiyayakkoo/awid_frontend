@@ -49,9 +49,7 @@ export const Profile: FC<Props> = ({ id }) => {
       address: getAddress(chain?.id ?? 0) as `0x${string}`,
       abi: identityControllerABI,
       functionName: 'identities',
-      args: [
-        '0x14d53cb07e6162a2a9bfc081877ce98c6b152f45c3950266a0a32d160eac0750'
-      ]
+      args: [id]
     })
 
     if (!chain || !data) {
@@ -60,6 +58,7 @@ export const Profile: FC<Props> = ({ id }) => {
 
     const typeData = data as any[]
 
+    console.log(data)
     const cid = typeData[0]
 
     const res = await axios.get<StoredFile>(

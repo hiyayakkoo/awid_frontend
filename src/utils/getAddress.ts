@@ -1,4 +1,7 @@
-import { mumbaiAddress } from '@/constants/identityController'
+import {
+  lineaGoerliAddress,
+  mumbaiAddress
+} from '@/constants/identityController'
 import { polygonMumbai, lineaTestnet } from 'wagmi/chains'
 
 export const getAddress = (chainId: number) => {
@@ -6,7 +9,7 @@ export const getAddress = (chainId: number) => {
     case polygonMumbai.id:
       return mumbaiAddress
     case lineaTestnet.id:
-      return ''
+      return lineaGoerliAddress
     default:
       return ''
   }
