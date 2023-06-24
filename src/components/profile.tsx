@@ -58,7 +58,9 @@ export const Profile: FC<Props> = ({ id }) => {
       return ''
     }
 
-    const cid = data[0]
+    const typeData = data as any[]
+
+    const cid = typeData[0]
 
     const res = await axios.get<StoredFile>(
       `https://cloudflare-ipfs.com/ipfs/${cid}/data.json`

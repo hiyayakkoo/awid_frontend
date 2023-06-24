@@ -1,7 +1,6 @@
 'use client'
 
 import { Profile } from '@/components/profile'
-import { RetrieveProofs } from '@/components/retrieveProofs'
 
 export default function Home({ params }: { params: { id: string } }) {
   return (
