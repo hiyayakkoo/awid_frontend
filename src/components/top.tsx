@@ -23,7 +23,7 @@ import { SismoConnect } from './sismoConnect'
 
 export const Top: FC<{}> = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const [accountNumber, setAccountNumber] = useState<number>(0)
+  const [accountNumber, setAccountNumber] = useState<number>(1)
 
   const modalBg = useColorModeValue('white', 'black')
   const modalString = useColorModeValue('black', 'white')

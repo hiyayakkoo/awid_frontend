@@ -42,6 +42,17 @@ import {
 } from '@sismo-core/sismo-connect-react'
 import { sismoConnectConfig } from '@/constants/sismo'
 import { StoredFile } from '@/model/storedFile'
+import { useConnectModal } from '@rainbow-me/rainbowkit'
+import {
+  useAccount,
+  useContractRead,
+  useContractWrite,
+  useNetwork
+} from 'wagmi'
+import { getAddress } from '@/utils/getAddress'
+import { identityControllerABI } from '@/constants/identityController'
+import { getLitChainName } from '@/utils/getLitChainName'
+import { getAccessControlConditions } from '@/utils/getAccessControlConditions'
 
 const MAX_SIZE = 5242880
 
@@ -158,11 +169,39 @@ export const ProfileEdit: FC<{}> = () => {
     [selectedAccounts]
   )
 
+  const { chain } = useNetwork()
+  const { isLoading: createIsLoading, write: create } = useContractWrite({
+    address: getAddress(chain?.id ?? 0) as `0x${string}`,
+    abi: identityControllerABI,
+    functionName: 'createIdentity',
+    onSuccess: () => {
+      router.push(`/profile/${vaultId}`)
+    }
+  })
+
+  const { isLoading: updateIsLoading, write: update } = useContractWrite({
+    address: getAddress(chain?.id ?? 0) as `0x${string}`,
+    abi: identityControllerABI,
+    functionName: 'updateIdentity',
+    onSuccess: () => {
+      router.push(`/profile/${vaultId}`)
+    }
+  })
+
+  const { address: account } = useAccount()
+
+  const { data, isError, isLoading } = useContractRead({
+    address: getAddress(chain?.id ?? 0) as `0x${string}`,
+    abi: identityControllerABI,
+    functionName: 'addressToId',
+    args: [account]
+  })
+
   const handleSaveProfile = async () => {
     setLoading(true)
     setError(null)
     try {
-      if (!!proofs) {
+      if (!!proofs && !!chain && !!vaultId) {
         const filteredProofs = proofs.filter((_, i) => selectedAccounts[i])
 
         const litNodeClient = new LitNodeClient()
@@ -175,25 +214,23 @@ export const ProfileEdit: FC<{}> = () => {
         })
 
         const authSig = await checkAndSignAuthMessage({
-          chain: litChain
+          chain: getLitChainName(chain.id)
         })
 
         const { encryptedString, symmetricKey } = await encryptString(
           stringToEncrypt
         )
 
-        console.log({
-          symmetricKey,
-          authSig,
-          litChain
-        })
-
+        const accessControlConditions = getAccessControlConditions(
+          chain,
+          vaultId
+        )
         const encryptedSymmetricKey: Uint8Array =
           await litNodeClient.saveEncryptionKey({
             accessControlConditions,
             symmetricKey,
             authSig,
-            chain: litChain
+            chain: getLitChainName(chain.id)
           })
 
         // store encryptedSymmetricKey to IPFS
@@ -203,9 +240,12 @@ export const ProfileEdit: FC<{}> = () => {
         }
         const cid = await storeJson(JSON.stringify(storeData))
 
-        // TODO: store cid and public/private flag with EOA address to contract
-        console.log(`stored cid: ${cid}`)
-        router.push(`/profile/${vaultId}`)
+        // store cid and public/private flag with EOA address to contract
+        if (!!data) {
+          update({ args: [vaultId, cid, visible] })
+        } else {
+          create({ args: [vaultId, cid, visible] })
+        }
       } else {
         console.error('the proofs is empty')
       }
@@ -216,6 +256,12 @@ export const ProfileEdit: FC<{}> = () => {
       setLoading(false)
     }
   }
+
+  const { openConnectModal } = useConnectModal()
+  const { address, isConnected } = useAccount()
+  useEffect(() => {
+    console.log(address)
+  }, [address])
 
   return (
     <VStack w="full">
@@ -411,9 +457,16 @@ export const ProfileEdit: FC<{}> = () => {
           <Divider />
 
           <HStack justify="end" w="full">
-            <Button onClick={handleSaveProfile} isLoading={loading}>
-              Save changes
-            </Button>
+            {isConnected ? (
+              <Button
+                onClick={handleSaveProfile}
+                isLoading={loading || createIsLoading || updateIsLoading}
+              >
+                Save changes
+              </Button>
+            ) : (
+              <Button onClick={openConnectModal}>Connect</Button>
+            )}
           </HStack>
         </VStack>
       </Container>

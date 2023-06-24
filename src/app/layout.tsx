@@ -1,5 +1,6 @@
 import { Providers } from '@/components/Providers'
 import { Lato } from 'next/font/google'
+import '@rainbow-me/rainbowkit/styles.css'
 
 const lato = Lato({ weight: ['400', '700'], subsets: ['latin'] })
 
