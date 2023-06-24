@@ -2,7 +2,7 @@
 
 import { sismoVerify } from '@/actions/sismoVerify'
 import { sismoAppId } from '@/constants/sismo'
-import { litChain } from '@/constants/lit'
+import { accessControlConditions, litChain } from '@/constants/lit'
 import {
   AuthType,
   SismoConnectButton,
@@ -18,6 +18,8 @@ import {
   encryptString,
   uint8arrayToString
 } from '@lit-protocol/lit-node-client'
+import { storeJson } from '@/actions/ipfs/storeJson'
+import { useRouter } from 'next/navigation'
 
 type Props = {}
 
@@ -52,6 +54,8 @@ export const SismoConnect: FC<Props> = () => {
     }
   }
 
+  const router = useRouter()
+
   const handleSaveProofs = async () => {
     setLoading(true)
     setError(null)
@@ -84,15 +88,23 @@ export const SismoConnect: FC<Props> = () => {
             chain: litChain
           })
 
-        // TODO: save encryptedSymmetricKey to ipfs
-
-        // Decrypto
-        const fetchedSymmetricKey = await litNodeClient.getEncryptionKey({
-          accessControlConditions,
-          toDecrypt: uint8arrayToString(encryptedSymmetricKey, 'base16'),
-          chain: litChain,
-          authSig
-        })
+        const convertBlobToBase64 = (blob: Blob): Promise<string> =>
+          new Promise((resolve, reject) => {
+            const reader = new FileReader()
+            reader.onerror = reject
+            reader.onload = () => {
+              resolve(reader.result as string)
+            }
+            reader.readAsDataURL(blob)
+          })
+        // store encryptedSymmetricKey to IPFS
+        const storeData: StoredFile = {
+          key: uint8arrayToString(encryptedSymmetricKey, 'base16'),
+          encryptedString: await convertBlobToBase64(encryptedString)
+        }
+        const cid = await storeJson(JSON.stringify(storeData))
+        console.log(`stored cid: ${cid}`)
+        router.push(`/mypage/${cid}`)
 
         const decryptedString = await decryptString(
           encryptedString,
@@ -131,15 +143,15 @@ export const SismoConnect: FC<Props> = () => {
         <div>
           <ul>
             {proofs.map(
-              (p) =>
+              (p, i) =>
                 p.auths && (
-                  <li key={p.auths[0].userId}>
+                  <li key={`${p.auths[0].userId}${i}`}>
                     <p>{p.auths[0].userId}</p>
                   </li>
                 )
             )}
           </ul>
-          <button onClick={handleSaveProofs}>Save to ceramic</button>
+          <button onClick={handleSaveProofs}>Save to IPFS</button>
           {loading && <div>Loading...</div>}
         </div>
       ) : (
