@@ -35,6 +35,7 @@ import axios from 'axios'
 import { StoredFile } from '@/model/storedFile'
 import { getAccessControlConditions } from '@/utils/getAccessControlConditions'
 import { games } from '@/constants/game'
+import { AttestationData } from '@/components/attestationData'
 
 type Props = {
   id: string
@@ -100,7 +101,7 @@ export const Profile: FC<Props> = ({ id }) => {
   useEffect(() => {
     ;(async () => {
       const data = await fetchData()
-      console.log(data)
+      console.log('data:', data)
       setData(data)
     })()
   }, [once])
@@ -115,6 +116,13 @@ export const Profile: FC<Props> = ({ id }) => {
       profileImage: string
     }
   }, [data])
+
+  useEffect(() => {
+    if (!parsedData) {
+      return
+    }
+    console.log('userId', parsedData.proofs[0].auths?.[0].userId ?? 'hogehoge')
+  }, [parsedData])
 
   const { colorMode } = useColorMode()
 
@@ -213,7 +221,12 @@ export const Profile: FC<Props> = ({ id }) => {
                           <HStack>
                             <Icon as={Insights} />
                             <Text fontSize="2xl" fontWeight="bold">
-                              0
+                              <AttestationData
+                                EOA={
+                                  parsedData.proofs[0].auths?.[0].userId ?? ''
+                                }
+                                ratingContract={game.contract}
+                              />
                             </Text>
                           </HStack>
                         </VStack>

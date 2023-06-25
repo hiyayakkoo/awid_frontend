@@ -10,10 +10,12 @@
     "format": "eslint --fix './**/*.{ts,tsx}' && prettier --write './**/*.{ts,tsx,yaml,json}'"
   },
   "dependencies": {
+    "@apollo/sandbox": "^2.5.0",
     "@chakra-ui/next-js": "^2.1.4",
     "@chakra-ui/react": "^2.7.1",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "@ethereum-attestation-service/eas-sdk": "^0.29.0",
     "@lit-protocol/lit-node-client": "^2.2.26",
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.13.6",
@@ -29,6 +31,7 @@
     "eslint": "8.43.0",
     "eslint-config-next": "13.4.6",
     "framer-motion": "^10.12.17",
+    "graphql": "^16.7.1",
     "lokijs": "^1.5.12",
     "next": "13.4.6",
     "pino-pretty": "^10.0.0",
