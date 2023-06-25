@@ -23,7 +23,7 @@ export const games: Game[] = [
   },
   {
     name: 'Influence',
-    image: 'Influence.jpg',
+    image: 'influence.jpg',
     contract: ''
   },
   {
@@ -58,7 +58,7 @@ export const games: Game[] = [
   },
   {
     name: 'Isle of Colors',
-    image: 'isle-of-colors.png',
+    image: 'isle.png',
     contract: ''
   },
   {
