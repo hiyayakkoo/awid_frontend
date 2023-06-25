@@ -15,7 +15,9 @@ import {
   ModalBody,
   NumberInput,
   useColorModeValue,
-  NumberInputField
+  NumberInputField,
+  Image,
+  useColorMode
 } from '@chakra-ui/react'
 import { FC, useState } from 'react'
 import { SismoConnect } from './sismoConnect'
@@ -26,11 +28,12 @@ export const Top: FC<{}> = () => {
 
   const modalBg = useColorModeValue('white', 'black')
   const modalString = useColorModeValue('black', 'white')
+  const { colorMode } = useColorMode()
 
   return (
     <>
       <Box>
-        <HStack w="full">
+        <HStack w="full" position="relative">
           {/* Content */}
           <VStack
             width="40%"
@@ -40,10 +43,25 @@ export const Top: FC<{}> = () => {
             p={10}
             pb={32}
           >
-            <Text>Autonomous World ID</Text>
+            <Box>
+              <Image
+                position="absolute"
+                src={
+                  colorMode == 'light'
+                    ? '/images/logo-black.png'
+                    : '/images/logo-white.png'
+                }
+                alt="logo"
+                w="200px"
+                top={10}
+                left={5}
+              />
+            </Box>
+
             <VStack spacing={10} alignItems="start">
-              <Text fontSize="xl" fontWeight="bold">
-                Help Bring Clean and Safe Water to Every Person on the Pplanet
+              <Text fontSize="3xl" fontWeight="bold">
+                Integrate game identities with privacy and Show off your skills
+                with attestation
               </Text>
               <HStack>
                 <Button onClick={onOpen}>Start app</Button>

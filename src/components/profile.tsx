@@ -18,10 +18,11 @@ import {
   useColorModeValue,
   SkeletonText,
   SkeletonCircle,
-  Skeleton
+  Skeleton,
+  useColorMode
 } from '@chakra-ui/react'
 import { FC, useEffect, useMemo, useRef, useState } from 'react'
-import { Edit, Groups, Insights } from '@mui/icons-material'
+import { Landscape, Edit, Groups, Insights } from '@mui/icons-material'
 import { useAccount, useContractRead, useNetwork, usePublicClient } from 'wagmi'
 import { getAddress } from '@/utils/getAddress'
 import { identityControllerABI } from '@/constants/identityController'
@@ -33,6 +34,7 @@ import { getLitChainName } from '@/utils/getLitChainName'
 import axios from 'axios'
 import { StoredFile } from '@/model/storedFile'
 import { getAccessControlConditions } from '@/utils/getAccessControlConditions'
+import { games } from '@/constants/game'
 
 type Props = {
   id: string
@@ -114,6 +116,8 @@ export const Profile: FC<Props> = ({ id }) => {
     }
   }, [data])
 
+  const { colorMode } = useColorMode()
+
   return (
     <Box
       backgroundImage={'/images/header-lg.png'}
@@ -121,14 +125,24 @@ export const Profile: FC<Props> = ({ id }) => {
       backgroundRepeat={'no-repeat'}
       w="full"
     >
-      <Container maxW="container.lg" py={20} px={10}>
+      <Box>
+        <Image
+          src={
+            colorMode == 'light'
+              ? '/images/logo-black.png'
+              : '/images/logo-white.png'
+          }
+          alt="logo"
+          w="200px"
+        />
+      </Box>
+      <Container maxW="container.lg" py={10} px={10}>
         <VStack
-          h="100vh"
+          h="80vh"
           backgroundColor="gray.200"
           borderRadius={20}
           shadow="xl"
           position="relative"
-          mt={20}
           py={10}
           px={8}
         >
@@ -176,44 +190,54 @@ export const Profile: FC<Props> = ({ id }) => {
           )}
 
           {!!parsedData ? (
-            <Grid templateColumns="repeat(3, 1fr)" gap={6} w="full">
-              <GridItem w="100%" h="300">
-                <Card w="full" h="full" rounded={20} overflow="hidden">
-                  <Box
-                    h="60%"
-                    overflow="hidden"
-                    backgroundImage="/images/try-yours-luck.jpg" // TODO: fix
-                    backgroundSize="cover"
-                    backgroundPosition="center"
-                  />
-                  <CardBody>
-                    <VStack>
+            <Grid
+              templateColumns="repeat(3, 1fr)"
+              gap={6}
+              w="full"
+              overflow="scroll"
+            >
+              {games.map((game) => (
+                <GridItem w="100%" h="300" key={game.name}>
+                  <Card w="full" h="full" rounded={20} overflow="hidden">
+                    <Box
+                      h="60%"
+                      overflow="hidden"
+                      backgroundImage={`/images/games/${game.image}`}
+                      backgroundSize="cover"
+                      backgroundPosition="center"
+                    />
+                    <CardBody>
                       <VStack>
-                        <Text>Try your&apos;s luck</Text>
-                        <Text fontSize="2xl" color="red.500" fontWeight="bold">
-                          Top 1%
-                        </Text>
-                      </VStack>
+                        <VStack>
+                          <Text>{game.name}</Text>
+                          <HStack>
+                            <Icon as={Insights} />
+                            <Text fontSize="2xl" fontWeight="bold">
+                              0
+                            </Text>
+                          </HStack>
+                        </VStack>
 
-                      <Divider />
-                      <HStack spacing={6}>
-                        <HStack>
-                          <Icon as={Insights} />
-                          <Text fontSize="lg" fontWeight="bold">
-                            8,000
-                          </Text>
+                        <Divider />
+                        <HStack spacing={6}>
+                          <HStack>
+                            <Icon as={Landscape} />
+                            <Text fontSize="lg" fontWeight="bold">
+                              Not played
+                            </Text>
+                          </HStack>
+                          <HStack>
+                            <Icon as={Groups} />
+                            <Text fontSize="lg" fontWeight="bold">
+                              {Math.floor(Math.random() * (500 - 100) + 100)}
+                            </Text>
+                          </HStack>
                         </HStack>
-                        <HStack>
-                          <Icon as={Groups} />
-                          <Text fontSize="lg" fontWeight="bold">
-                            200
-                          </Text>
-                        </HStack>
-                      </HStack>
-                    </VStack>
-                  </CardBody>
-                </Card>
-              </GridItem>
+                      </VStack>
+                    </CardBody>
+                  </Card>
+                </GridItem>
+              ))}
             </Grid>
           ) : (
             <Grid templateColumns="repeat(3, 1fr)" gap={6} w="full">
