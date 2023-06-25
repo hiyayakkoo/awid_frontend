@@ -36,7 +36,7 @@ export const AttestationData: FC<Prop> = ({ EOA, ratingContract }) => {
       })
     })
       .then((response) => response.json())
-      .then((result) => setData(result.data.attestations))
+      .then((result) => setData(result.data.attestations ?? '---'))
   }, [EOA, ratingContract])
 
   if (!EOA || !ratingContract) {

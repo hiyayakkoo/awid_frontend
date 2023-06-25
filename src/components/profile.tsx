@@ -60,6 +60,7 @@ import {
 import { Chart as ChartJS, registerables } from 'chart.js'
 import { Line } from 'react-chartjs-2'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
+import { SismoConnectProof } from '@sismo-core/sismo-connect-react'
 
 ChartJS.register(...registerables)
 
@@ -137,7 +138,7 @@ export const Profile: FC<Props> = ({ id }) => {
       return undefined
     }
     return JSON.parse(data) as {
-      proofs: string
+      proofs: SismoConnectProof[]
       name: string
       profileImage: string
     }
@@ -273,13 +274,17 @@ export const Profile: FC<Props> = ({ id }) => {
                             <HStack>
                               <Icon as={Insights} />
                               <Text fontSize="3xl" fontWeight="bold">
-                                <AttestationData
-                                  EOA={
-                                    JSON.parse(parsedData.proofs)[0].auths?.[0]
-                                      .userId ?? ''
-                                  }
-                                  ratingContract={game.contract}
-                                />
+                                {!!parsedData.proofs ? (
+                                  <AttestationData
+                                    EOA={
+                                      parsedData.proofs[0].auths?.[0].userId ??
+                                      ''
+                                    }
+                                    ratingContract={game.contract}
+                                  />
+                                ) : (
+                                  <SkeletonText noOfLines={1} />
+                                )}
                               </Text>
                             </HStack>
                           </VStack>
