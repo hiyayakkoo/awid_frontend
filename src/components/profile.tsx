@@ -281,10 +281,10 @@ export const Profile: FC<Props> = ({ id }) => {
                               <Icon as={Insights} />
                               <Text fontSize="3xl" fontWeight="bold">
                                 <AttestationData
-                                    EOA={
-                                        parsedData.proofs[0].auths?.[0].userId ?? ''
-                                    }
-                                    ratingContract={game.contract}
+                                  EOA={
+                                    parsedData.proofs[0].auths?.[0].userId ?? ''
+                                  }
+                                  ratingContract={game.contract}
                                 />
                               </Text>
                             </HStack>

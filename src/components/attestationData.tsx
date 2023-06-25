@@ -1,6 +1,4 @@
-import { ApolloSandbox } from '@apollo/sandbox/react'
 import { FC, useEffect, useState } from 'react'
-import { contracts } from '@ethereum-attestation-service/eas-contracts'
 
 type Prop = {
   EOA: string
@@ -52,14 +50,14 @@ export const AttestationData: FC<Prop> = ({ EOA, ratingContract }) => {
   return (
     <div>
       {data.map((att, index) => {
-        const data = typeof never  null
+        const typedData = data as unknown as string
 
-        if(!data) {
+        if (!data) {
           return <div key={index}>Loading</div>
         }
         return (
           <div key={index}>
-            {parseInt(data.slice(0, 66), 16).toString()}
+            {parseInt(typedData.slice(0, 66), 16).toString()}
           </div>
         )
       })}
