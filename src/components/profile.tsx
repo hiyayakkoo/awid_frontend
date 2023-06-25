@@ -307,7 +307,7 @@ export const Profile: FC<Props> = ({ id }) => {
                                     }
                                     ratingContract={game.contract}
                                     fallbackValue={
-                                      !ratingData?.ratingUpdateds
+                                      !ratingData?.ratingUpdateds[0]
                                         ? undefined
                                         : ratingData?.ratingUpdateds[0]
                                             .newRating
