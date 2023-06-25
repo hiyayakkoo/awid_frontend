@@ -1,0 +1,11 @@
+query GetRatingQuery($userAddress: Bytes, $attester: Bytes) {
+  ratingUpdateds(
+    where: { userAddress: $userAddress, attester: $attester }
+    first: 20
+  ) {
+    userAddress
+    attester
+    newRating
+    blockTimestamp
+  }
+}
