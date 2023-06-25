@@ -38,7 +38,7 @@ import {
   Insights,
   MoreVert
 } from '@mui/icons-material'
-import { useAccount, useContractRead, useNetwork, usePublicClient } from 'wagmi'
+import { useNetwork, usePublicClient } from 'wagmi'
 import { getAddress } from '@/utils/getAddress'
 import { identityControllerABI } from '@/constants/identityController'
 import {
@@ -279,10 +279,23 @@ export const Profile: FC<Props> = ({ id }) => {
                           position="absolute"
                           top={0}
                           right={0}
+                          isDisabled={game.contract == ''}
                         />
                         <VStack>
                           <VStack>
-                            <Text>{game.name}</Text>
+                            {!!game.url ? (
+                              <a
+                                href={game.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                <Text color="primary.500" fontWeight="bold">
+                                  {game.name}
+                                </Text>
+                              </a>
+                            ) : (
+                              <Text>{game.name}</Text>
+                            )}
                             <HStack>
                               <Icon as={Insights} />
                               <Text fontSize="3xl" fontWeight="bold">
@@ -379,16 +392,20 @@ export const Profile: FC<Props> = ({ id }) => {
             ) : (
               <Line
                 data={{
-                  labels: ratingData.ratingUpdateds.map((r) =>
-                    new Date(r.blockTimestamp * 1000).toLocaleDateString(
-                      'en-US',
-                      { hour: 'numeric', minute: 'numeric' }
+                  labels: ratingData.ratingUpdateds
+                    .map((r) =>
+                      new Date(r.blockTimestamp * 1000).toLocaleDateString(
+                        'en-US',
+                        { hour: 'numeric', minute: 'numeric' }
+                      )
                     )
-                  ),
+                    .reverse(),
                   datasets: [
                     {
                       label: 'Score',
-                      data: ratingData.ratingUpdateds.map((r) => r.newRating),
+                      data: ratingData.ratingUpdateds
+                        .map((r) => r.newRating)
+                        .reverse(),
                       borderColor: '#546EF3',
                       backgroundColor: '#546EF3'
                     }

@@ -3,13 +3,15 @@ export type Game = {
   image: string
   contract: string
   descriptions?: string
+  url?: string
 }
 
 export const games: Game[] = [
   {
     name: 'Sushi Master VS',
     image: 'sushi-master-vs.png',
-    contract: '0xf23c27e808657b93adf5de2368de0f601bafc6e0'
+    contract: '0xf23c27e808657b93adf5de2368de0f601bafc6e0',
+    url: 'https://main--funny-piroshki-655759.netlify.app/'
   },
   {
     name: 'dark forest',
