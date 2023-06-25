@@ -149,15 +149,32 @@ export const Profile: FC<Props> = ({ id }) => {
   // Details modal
   const { isOpen, onOpen, onClose } = useDisclosure()
 
+  // const [ratingData, setRatingData] = useState<GetRatingQueryQuery>()
+  // const handleOpen = async (userAddress: string, attester: string) => {
+  //   onOpen()
+  //   const res = await execute(GetRatingQueryDocument, {
+  //     userAddress,
+  //     attester
+  //   })
+  //   setRatingData(res.data)
+  // }
+
+  // NOTE: temp get sushi
   const [ratingData, setRatingData] = useState<GetRatingQueryQuery>()
-  const handleOpen = async (userAddress: string, attester: string) => {
-    onOpen()
+  const fetchRating = async (userAddress: string, attester: string) => {
     const res = await execute(GetRatingQueryDocument, {
       userAddress,
       attester
     })
     setRatingData(res.data)
   }
+
+  useEffect(() => {
+    if (!parsedData?.proofs[0].auths?.[0].userId) {
+      return
+    }
+    fetchRating(parsedData?.proofs[0].auths?.[0].userId, games[0].contract)
+  }, [parsedData])
 
   return (
     <>
@@ -258,12 +275,7 @@ export const Profile: FC<Props> = ({ id }) => {
                           icon={<Icon as={MoreVert} />}
                           aria-label="edit"
                           variant="unstyled"
-                          onClick={() =>
-                            handleOpen(
-                              '0x198d7d6522493c3a0136e1e90e2b58dacc522466',
-                              '0xa9d5714a6ef0f9063fe160acc2b0cf0d049d2265'
-                            )
-                          }
+                          onClick={onOpen}
                           position="absolute"
                           top={0}
                           right={0}
@@ -281,6 +293,12 @@ export const Profile: FC<Props> = ({ id }) => {
                                       ''
                                     }
                                     ratingContract={game.contract}
+                                    fallbackValue={
+                                      !ratingData?.ratingUpdateds
+                                        ? undefined
+                                        : ratingData?.ratingUpdateds[0]
+                                            .newRating
+                                    }
                                   />
                                 ) : (
                                   <SkeletonText noOfLines={1} />

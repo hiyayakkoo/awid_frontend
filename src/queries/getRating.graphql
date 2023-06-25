@@ -2,6 +2,8 @@ query GetRatingQuery($userAddress: Bytes, $attester: Bytes) {
   ratingUpdateds(
     where: { userAddress: $userAddress, attester: $attester }
     first: 20
+    orderBy: blockNumber
+    orderDirection: desc
   ) {
     userAddress
     attester

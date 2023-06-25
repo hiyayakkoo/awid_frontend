@@ -4,9 +4,15 @@ import { FC, useEffect, useState } from 'react'
 type Prop = {
   EOA: string
   ratingContract: string
+  fallbackValue?: string
 }
-export const AttestationData: FC<Prop> = ({ EOA, ratingContract }) => {
+export const AttestationData: FC<Prop> = ({
+  EOA,
+  ratingContract,
+  fallbackValue
+}) => {
   const [data, setData] = useState<string>()
+  const [fall, setFall] = useState<boolean>(false)
   useEffect(() => {
     if (!EOA || !ratingContract) {
       return
@@ -41,6 +47,7 @@ export const AttestationData: FC<Prop> = ({ EOA, ratingContract }) => {
         console.log(result)
         if (result.data.attestations.length == 0) {
           setData('0')
+          setFall(true)
         } else {
           setData(result.data.attestations as unknown as string)
         }
@@ -65,7 +72,13 @@ export const AttestationData: FC<Prop> = ({ EOA, ratingContract }) => {
 
   return (
     <div>
-      <div>{parseInt(data.slice(0, 66), 16).toString()}</div>
+      <div>
+        {fall
+          ? !!fallbackValue
+            ? fallbackValue
+            : parseInt(data.slice(0, 66), 16).toString()
+          : parseInt(data.slice(0, 66), 16).toString()}
+      </div>
     </div>
   )
 }

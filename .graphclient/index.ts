@@ -641,7 +641,7 @@ export async function getMeshOptions(): Promise<GetMeshOptions> {
     name: 'awid',
     config: {
       endpoint:
-        'https://api.studio.thegraph.com/query/48920/rating_graph/v0.0.1'
+        'https://api.studio.thegraph.com/query/48920/rating_subgraph/v0.0.3'
     },
     baseDir,
     cache,
@@ -749,6 +749,8 @@ export const GetRatingQueryDocument = gql`
     ratingUpdateds(
       where: { userAddress: $userAddress, attester: $attester }
       first: 20
+      orderBy: blockNumber
+      orderDirection: desc
     ) {
       userAddress
       attester
