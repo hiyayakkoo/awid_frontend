@@ -21,6 +21,7 @@ import {
 } from '@chakra-ui/react'
 import { FC, useState } from 'react'
 import { SismoConnect } from './sismoConnect'
+import { ConnectButton } from '@rainbow-me/rainbowkit'
 
 export const Top: FC<{}> = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -32,7 +33,10 @@ export const Top: FC<{}> = () => {
 
   return (
     <>
-      <Box>
+      <Box position="relative">
+        <Box position="absolute" top={2} right={2} zIndex={10}>
+          <ConnectButton />
+        </Box>
         <HStack w="full" position="relative">
           {/* Content */}
           <VStack

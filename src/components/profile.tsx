@@ -58,6 +58,7 @@ import {
 
 import { Chart as ChartJS, registerables } from 'chart.js'
 import { Line } from 'react-chartjs-2'
+import { ConnectButton } from '@rainbow-me/rainbowkit'
 
 ChartJS.register(...registerables)
 
@@ -163,7 +164,11 @@ export const Profile: FC<Props> = ({ id }) => {
         backgroundSize="contain"
         backgroundRepeat={'no-repeat'}
         w="full"
+        position="relative"
       >
+        <Box position="absolute" top={2} right={2} zIndex={10}>
+          <ConnectButton />
+        </Box>
         <Box>
           <Image
             src={
