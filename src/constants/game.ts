@@ -19,7 +19,7 @@ export const games: Game[] = [
   },
   {
     name: 'Influence',
-    image: 'Influence.jpg'
+    image: 'influence.jpg'
   },
   {
     name: 'MuMu',
@@ -47,7 +47,7 @@ export const games: Game[] = [
   },
   {
     name: 'Isle of Colors',
-    image: 'isle-of-colors.png'
+    image: 'isle.png'
   },
   {
     name: 'Realm of Pepe',
