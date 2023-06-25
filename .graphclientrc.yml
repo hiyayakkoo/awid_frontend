@@ -1,0 +1,9 @@
+sources:
+  - name: awid
+    handler:
+      graphql:
+        endpoint: https://api.studio.thegraph.com/query/48920/rating_graph/v0.0.1
+
+
+documents:
+  - ./src/queries/getRating.graphql

@@ -43,7 +43,7 @@ import {
 } from '@sismo-core/sismo-connect-react'
 import { sismoConnectConfig } from '@/constants/sismo'
 import { StoredFile } from '@/model/storedFile'
-import { useConnectModal } from '@rainbow-me/rainbowkit'
+import { ConnectButton, useConnectModal } from '@rainbow-me/rainbowkit'
 import {
   useAccount,
   useContractEvent,
@@ -330,6 +330,9 @@ export const ProfileEdit: FC<{}> = () => {
   return (
     <VStack w="full">
       <Box position="relative" mb={32}>
+        <Box position="absolute" top={2} right={2} zIndex={10}>
+          <ConnectButton />
+        </Box>
         <Image src="/images/header-sm.png" w="full" alt="header" />
         <Container maxW="container.xl">
           <HStack spacing={4} position="absolute" bottom={-24}>
