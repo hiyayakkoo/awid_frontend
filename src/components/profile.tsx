@@ -147,7 +147,6 @@ export const Profile: FC<Props> = ({ id }) => {
     if (!parsedData) {
       return
     }
-    console.log('userId', parsedData.proofs[0].auths?.[0].userId ?? 'hogehoge')
   }, [parsedData])
 
   const { colorMode } = useColorMode()
