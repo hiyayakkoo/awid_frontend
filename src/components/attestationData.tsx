@@ -1,3 +1,4 @@
+import { SkeletonText } from '@chakra-ui/react'
 import { FC, useEffect, useState } from 'react'
 
 type Prop = {
@@ -5,7 +6,7 @@ type Prop = {
   ratingContract: string
 }
 export const AttestationData: FC<Prop> = ({ EOA, ratingContract }) => {
-  const [data, setData] = useState([])
+  const [data, setData] = useState<string>()
   useEffect(() => {
     if (!EOA || !ratingContract) {
       return
@@ -36,31 +37,35 @@ export const AttestationData: FC<Prop> = ({ EOA, ratingContract }) => {
       })
     })
       .then((response) => response.json())
-      .then((result) => setData(result.data.attestations))
+      .then((result) => {
+        console.log(result)
+        if (result.data.attestations.length == 0) {
+          setData('0')
+        } else {
+          setData(result.data.attestations as unknown as string)
+        }
+      })
   }, [EOA, ratingContract])
 
   if (!EOA || !ratingContract) {
     return <div>---</div>
   }
 
-  if (!data.length) {
-    return <div>Loading</div>
+  if (!data) {
+    return (
+      <SkeletonText
+        noOfLines={1}
+        h="45px"
+        w="10"
+        display="flex"
+        alignItems="center"
+      />
+    )
   }
 
   return (
     <div>
-      {data.map((att, index) => {
-        const typedData = data as unknown as string
-
-        if (!data) {
-          return <div key={index}>Loading</div>
-        }
-        return (
-          <div key={index}>
-            {parseInt(typedData.slice(0, 66), 16).toString()}
-          </div>
-        )
-      })}
+      <div>{parseInt(data.slice(0, 66), 16).toString()}</div>
     </div>
   )
 }
