@@ -21,7 +21,9 @@ import {
   Td,
   Switch,
   Button,
-  SkeletonText
+  SkeletonText,
+  useToast,
+  position
 } from '@chakra-ui/react'
 import { FC, createRef, useCallback, useEffect, useMemo, useState } from 'react'
 import Dropzone, { DropzoneRef, FileRejection } from 'react-dropzone'
@@ -44,6 +46,7 @@ import { StoredFile } from '@/model/storedFile'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import {
   useAccount,
+  useContractEvent,
   useContractRead,
   useContractWrite,
   useNetwork
@@ -52,6 +55,7 @@ import { getAddress } from '@/utils/getAddress'
 import { identityControllerABI } from '@/constants/identityController'
 import { getLitChainName } from '@/utils/getLitChainName'
 import { getAccessControlConditions } from '@/utils/getAccessControlConditions'
+import { Log } from 'viem'
 
 const MAX_SIZE = 5242880
 
@@ -175,6 +179,7 @@ export const ProfileEdit: FC<{}> = () => {
     },
     [selectedAccounts]
   )
+  const [stateString, setStateString] = useState<string>()
 
   const { chain } = useNetwork()
   const { isLoading: createIsLoading, write: create } = useContractWrite({
@@ -182,7 +187,7 @@ export const ProfileEdit: FC<{}> = () => {
     abi: identityControllerABI,
     functionName: 'createIdentity',
     onSuccess: () => {
-      router.push(`/profile/${vaultId}`)
+      setStateString('Waiting tx finish...')
     }
   })
 
@@ -191,11 +196,12 @@ export const ProfileEdit: FC<{}> = () => {
     abi: identityControllerABI,
     functionName: 'updateIdentity',
     onSuccess: () => {
-      router.push(`/profile/${vaultId}`)
+      setStateString('Waiting tx finish...')
     }
   })
 
   const { address: account } = useAccount()
+  const toast = useToast()
 
   const { data, isError, isLoading } = useContractRead({
     address: getAddress(chain?.id ?? 0) as `0x${string}`,
@@ -204,12 +210,15 @@ export const ProfileEdit: FC<{}> = () => {
     args: [account]
   })
 
+  const [isContractLoading, setIsContractLoading] = useState<boolean>(false)
+
   const handleSaveProfile = async () => {
     console.log('addressToId', data)
     setLoading(true)
     setError(null)
     try {
       if (!!proofs && !!chain && !!vaultId) {
+        setStateString('Start loading...')
         const filteredProofs = proofs.filter((_, i) => selectedAccounts[i])
 
         const litNodeClient = new LitNodeClient()
@@ -221,10 +230,12 @@ export const ProfileEdit: FC<{}> = () => {
           profileImage: base64Image
         })
 
+        setStateString('Waiting a sign...')
         const authSig = await checkAndSignAuthMessage({
           chain: getLitChainName(chain.id)
         })
 
+        setStateString('Encrypting...')
         const { encryptedString, symmetricKey } = await encryptString(
           stringToEncrypt
         )
@@ -234,6 +245,7 @@ export const ProfileEdit: FC<{}> = () => {
           vaultId
         )
 
+        setStateString('Store to IPFS...')
         const encryptedSymmetricKey: Uint8Array =
           await litNodeClient.saveEncryptionKey({
             accessControlConditions,
@@ -249,6 +261,8 @@ export const ProfileEdit: FC<{}> = () => {
         }
         const cid = await storeJson(JSON.stringify(storeData))
 
+        setStateString('Store to the contract...')
+        setIsContractLoading(true)
         // store cid and public/private flag with EOA address to contract
         if (!!data) {
           update({ args: [vaultId, cid, visible] })
@@ -261,10 +275,51 @@ export const ProfileEdit: FC<{}> = () => {
     } catch (e) {
       setError(error)
       console.error(e)
+      const err = e as Error
+      toast({
+        status: 'error',
+        description: err.message
+      })
     } finally {
       setLoading(false)
     }
   }
+
+  const callbackEventFunc = (log: Log[]) => {
+    console.log('Event log', log)
+    toast({
+      status: 'success',
+      title: 'Store success!',
+      position: 'top-right'
+    })
+    setStateString('')
+    setIsContractLoading(false)
+
+    const l = log[0] as unknown as {
+      args: { id: string; cid: string; visibility: boolean }
+    }
+    const id = l.args.id
+
+    router.push(`/profile/${id}`)
+  }
+
+  useContractEvent({
+    address: getAddress(chain?.id ?? 0) as `0x${string}`,
+    abi: identityControllerABI,
+    eventName: 'CreateIdentity',
+    listener(log) {
+      callbackEventFunc(log)
+    }
+  })
+
+  useContractEvent({
+    address: getAddress(chain?.id ?? 0) as `0x${string}`,
+    abi: identityControllerABI,
+    eventName: 'UpdateIdentity',
+    listener(log) {
+      callbackEventFunc(log)
+    }
+  })
 
   const { openConnectModal } = useConnectModal()
   const { address, isConnected } = useAccount()
@@ -467,12 +522,20 @@ export const ProfileEdit: FC<{}> = () => {
 
           <HStack justify="end" w="full">
             {isConnected ? (
-              <Button
-                onClick={handleSaveProfile}
-                isLoading={loading || createIsLoading || updateIsLoading}
-              >
-                Save changes
-              </Button>
+              <VStack>
+                <Button
+                  onClick={handleSaveProfile}
+                  isLoading={
+                    loading ||
+                    createIsLoading ||
+                    updateIsLoading ||
+                    isContractLoading
+                  }
+                >
+                  Save changes
+                </Button>
+                <Text fontSize="sm">{stateString}</Text>
+              </VStack>
             ) : (
               <Button onClick={openConnectModal}>Connect</Button>
             )}
