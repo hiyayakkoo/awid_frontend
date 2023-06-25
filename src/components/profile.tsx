@@ -143,12 +143,6 @@ export const Profile: FC<Props> = ({ id }) => {
     }
   }, [data])
 
-  useEffect(() => {
-    if (!parsedData) {
-      return
-    }
-  }, [parsedData])
-
   const { colorMode } = useColorMode()
 
   // Details modal
@@ -281,7 +275,8 @@ export const Profile: FC<Props> = ({ id }) => {
                               <Text fontSize="3xl" fontWeight="bold">
                                 <AttestationData
                                   EOA={
-                                    parsedData.proofs[0].auths?.[0].userId ?? ''
+                                    JSON.parse(parsedData.proofs)[0].auths?.[0]
+                                      .userId ?? ''
                                   }
                                   ratingContract={game.contract}
                                 />
